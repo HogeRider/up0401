@@ -1,0 +1,88 @@
+<!-- roles.html -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Навигация</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/histories">История</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredients">Ингредиенты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredientTypes">Типы ингредиентов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]' || roleAutor == '[ROLE_Покупатель]'}">
+                <a class="nav-link" href="/products">Продукты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/productTypes">Типы продуктов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/role">Роли</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/shelfLife">Срок годности</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/treaties">Договоры</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<h1>Роли</h1>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="role : ${roles}">
+        <td th:text="${role.id}"></td>
+        <td th:text="${role.name}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<form action="/role" method="post">
+    <label for="roleName">Название роли:</label>
+    <input type="text" id="roleName" name="name" required>
+    <button type="submit">Добавить</button>
+</form>
+
+<form action="/role/update" method="post">
+    <label for="updateRoleId">ID роли:</label>
+    <input type="text" id="updateRoleId" name="id" required>
+    <label for="updatedRoleName">Название роли:</label>
+    <input type="text" id="updatedRoleName" name="name" required>
+    <button type="submit">Обновить</button>
+</form>
+
+<form action="/role/delete" method="post">
+    <label for="deleteRoleId">ID роли:</label>
+    <input type="text" id="deleteRoleId" name="id" required>
+    <button type="submit">Удалить</button>
+</form>
+
+</body>
+</html>

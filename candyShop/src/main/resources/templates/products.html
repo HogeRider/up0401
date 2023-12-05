@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Навигация</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/histories">История</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredients">Ингредиенты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredientTypes">Типы ингредиентов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]' || roleAutor == '[ROLE_Покупатель]'}">
+                <a class="nav-link" href="/products">Продукты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/productTypes">Типы продуктов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/role">Роли</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/shelfLife">Срок годности</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/treaties">Договоры</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+            <h2>Продукты</h2>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Тип продукта</th>
+                    <th>Срок годности</th>
+                    <th>Ингредиент</th>
+                    <th>Цена продукта</th>
+                    <th>Количество продукта</th>
+                    <th>Название продукта</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.productType.productTypeName}"></td>
+                    <td th:text="${product.shelfLife.shelfLifeYear}"></td>
+                    <td th:text="${product.ingredient.ingredientName}"></td>
+                    <td th:text="${product.productCost}"></td>
+                    <td th:text="${product.productCount}"></td>
+                    <td th:text="${product.productName}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                var id = row.querySelector('td:nth-child(1)').innerText;
+                var productType = row.querySelector('td:nth-child(2)').innerText;
+                var shelfLife = row.querySelector('td:nth-child(3)').innerText;
+                var ingredient = row.querySelector('td:nth-child(4)').innerText;
+                var productCost = row.querySelector('td:nth-child(5)').innerText;
+                var productCount = row.querySelector('td:nth-child(6)').innerText;
+                var productName = row.querySelector('td:nth-child(7)').innerText;
+
+                document.getElementById('updateId').value = id;
+                document.getElementById('updateProductType_Id').value = productType;
+                document.getElementById('updateShelfLife_Id').value = shelfLife;
+                document.getElementById('updateIngredient_Id').value = ingredient;
+                document.getElementById('updateProductCost').value = productCost;
+                document.getElementById('updateProductCount').value = productCount;
+                document.getElementById('updateProductName').value = productName;
+                document.getElementById('deleteId').value = productName;
+            });
+        });
+    });
+</script>
+<h2>Product Management</h2>
+
+<form action="/products/add" method="post" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+    <label for="productType_Id">Тип продукта:</label>
+    <select id="productType_Id" name="productType_Id" required>
+        <option value="">Выберите тип продукта</option>
+        <th:block th:each="productType : ${productTypes}">
+            <option th:value="${productType.id}" th:text="${productType.productTypeName}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="shelfLife_Id">Shelf Life:</label>
+    <select id="shelfLife_Id" name="shelfLife_Id" required>
+        <option value="">Выберите срок годности</option>
+        <th:block th:each="shelfLife : ${shelfLifes}">
+            <option th:value="${shelfLife.id}" th:text="${shelfLife.shelfLifeYear}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="ingredient_Id">Ingredient:</label>
+    <select id="ingredient_Id" name="ingredient_Id" required>
+        <option value="">Выберите ингредиент</option>
+        <th:block th:each="ingredient : ${ingredients}">
+            <option th:value="${ingredient.id}" th:text="${ingredient.ingredientName}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="productCost">Цена продукта:</label>
+    <input type="number" id="productCost" name="productCost" required><br>
+
+    <label for="productCount">Количество продукта:</label>
+    <input type="number" id="productCount" name="productCount" required><br>
+
+    <label for="productName">Название продукта:</label>
+    <input type="text" id="productName" name="productName" required><br>
+
+    <button type="submit">Добавить</button>
+</form>
+
+<form action="/products/update" method="post" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+    <label for="updateId">ID продукта:</label>
+    <select id="updateId" name="id">
+        <option value="">Выберите ID</option>
+        <th:block th:each="product : ${products}">
+            <option th:value="${product.id}" th:text="${product.id}"></option>
+        </th:block>
+    </select>
+
+    <label for="updateProductType_Id">Тип продукта:</label>
+    <select id="updateProductType_Id" name="productType_Id" required>
+        <option value="">Выберите тип продукта</option>
+        <th:block th:each="productType : ${productTypes}">
+            <option th:value="${productType.id}" th:text="${productType.productTypeName}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="updateShelfLife_Id">Срок годности продукта:</label>
+    <select id="updateShelfLife_Id" name="shelfLife_Id" required>
+        <option value="">Выберите срок годности продукта</option>
+        <th:block th:each="shelfLife : ${shelfLifes}">
+            <option th:value="${shelfLife.id}" th:text="${shelfLife.shelfLifeYear}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="updateIngredient_Id">Ингредиент:</label>
+    <select id="updateIngredient_Id" name="ingredient_Id" required>
+        <option value="">Выберите ингредиент</option>
+        <th:block th:each="ingredient : ${ingredients}">
+            <option th:value="${ingredient.id}" th:text="${ingredient.ingredientName}"></option>
+        </th:block>
+    </select><br>
+
+    <label for="updateProductCost">Цена продукта:</label>
+    <input type="number" id="updateProductCost" name="productCost"><br>
+
+    <label for="updateProductCount">Количество продукта:</label>
+    <input type="number" id="updateProductCount" name="productCount"><br>
+
+    <label for="updateProductName">Название продукта:</label>
+    <input type="text" id="updateProductName" name="productName"><br>
+
+    <button type="submit">Обновить</button>
+</form>
+
+<form action="/products/delete" method="post" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+    <label for="deleteId">ID продукта:</label>
+    <select id="deleteId" name="id">
+        <option value="">Выберите ID продукта</option>
+        <th:block th:each="product : ${products}">
+            <option th:value="${product.id}" th:text="${product.id}"></option>
+        </th:block>
+    </select>
+    <button type="submit">Удалить</button>
+</form>
+
+</body>
+</html>

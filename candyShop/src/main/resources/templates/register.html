@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+
+
+<h2>РЕГИСТРАЦИЯ</h2>
+
+<form action="/register-form" method="post">
+    <label for="firstName">Фамилия:</label>
+    <input type="text" id="firstName" name="firstName" required><br>
+
+    <label for="lastName">Имя:</label>
+    <input type="text" id="lastName" name="lastName" required><br>
+
+    <label for="middleName">Отчество:</label>
+    <input type="text" id="middleName" name="middleName" required><br>
+
+    <label for="gender">Пол:</label>
+    <select id="gender" name="gender" required>
+        <option value="M">Мужчина</option>
+        <option value="F">Женщина</option>
+    </select><br>
+
+    <label for="login">Логин:</label>
+    <input type="text" id="login" name="login" required><br>
+
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <label for="phoneNumber">Номер телефона:</label>
+    <input type="text" id="phoneNumber" name="phoneNumber" required><br>
+
+    <label for="email">Почта:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="role">Роль:</label>
+    <select id="role" name="role" required>
+        <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+    </select><br>
+
+    <button type="submit">Зарегистрироваться</button>
+</form>
+</body>
+</html>

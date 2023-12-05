@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Навигация</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/histories">История</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredients">Ингредиенты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredientTypes">Типы ингредиентов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]' || roleAutor == '[ROLE_Покупатель]'}">
+                <a class="nav-link" href="/products">Продукты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/productTypes">Типы продуктов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/role">Роли</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/shelfLife">Срок годности</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/treaties">Договоры</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+<h2>История</h2>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Количество продуктов</th>
+        <th>Номер договора</th>
+        <th>Название продукта/th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="history : ${histories}">
+        <td th:text="${history.id}"></td>
+        <td th:text="${history.productCountHistory}"></td>
+        <td th:text="${history.treaty.treatyNumber}"></td>
+        <td th:text="${history.product.productName}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                var id = row.querySelector('td:nth-child(1)').innerText;
+                var productCountHistory = row.querySelector('td:nth-child(2)').innerText;
+                var treatyNumber = row.querySelector('td:nth-child(3)').innerText;
+                var productName = row.querySelector('td:nth-child(4)').innerText;
+
+
+                document.getElementById('history_Id').value = id;
+                document.getElementById('updateProductCountHistory').value = productCountHistory;
+                document.getElementById('updateTreaty_Id').value = treatyNumber;
+                document.getElementById('updateProduct_Id').value = productName;
+                document.getElementById('deleteId').value = id;
+            });
+        });
+    });
+</script>
+
+
+<h2>Панель управления историей</h2>
+<form action="/histories/add" method="post">
+    <label for="productCountHistory">Количество продуктов:</label>
+    <input type="text" id="productCountHistory" name="productCountHistory" required><br>
+    <label for="treaty_Id">Номер договора:</label>
+    <select id="treaty_Id" name="treaty_Id" required>
+        <th:block th:each="treaty : ${treaties}">
+            <option th:value="${treaty.id}" th:text="${treaty.treatyNumber}"></option>
+        </th:block>
+    </select>
+    <label for="product_Id">Название продукта:</label>
+    <select id="product_Id" name="product_Id" required>
+        <th:block th:each="product : ${products}">
+            <option th:value="${product.id}" th:text="${product.productName}"></option>
+        </th:block>
+    </select>
+    <button type="submit">Добавить</button>
+</form>
+<form action="/histories/update" method="post">
+    <label for="history_Id">ID истории:</label>
+    <input type="number" id="history_Id" name="id" required><br>
+
+    <label for="productCountHistory">Количество продукта:</label>
+    <input type="number" id="updateProductCountHistory" name="productCountHistory" required><br>
+
+    <label for="updateTreaty_Id">Номер договора:</label>
+    <select id="updateTreaty_Id" name="treaty_Id" required>
+        <th:block th:each="treaty : ${treaties}">
+            <option th:value="${treaty.id}" th:text="${treaty.treatyNumber}"></option>
+        </th:block>
+    </select>
+
+    <label for="updateProduct_Id">Название продукта:</label>
+    <select id="updateProduct_Id" name="product_Id" required>
+        <th:block th:each="product : ${products}">
+            <option th:value="${product.id}" th:text="${product.productName}"></option>
+        </th:block>
+    </select>
+
+    <button type="submit">Обновить</button>
+</form>
+<form action="/histories/delete" method="post">
+    <label for="deleteId">Удаление записи истории:</label>
+    <select id="deleteId" name="id">
+        <option value="">Выберите ID истории</option>
+        <th:block th:each="history : ${histories}">
+            <option th:value="${history.id}" th:text="${history.id}"></option>
+        </th:block>
+    </select>
+    <button type="submit">Удалить</button>
+</form>
+</body>
+</html>

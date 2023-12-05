@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredients</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Навигация</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/histories">История</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredients">Ингредиенты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/ingredientTypes">Типы ингредиентов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]' || roleAutor == '[ROLE_Покупатель]'}">
+                <a class="nav-link" href="/products">Продукты</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/productTypes">Типы продуктов</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/role">Роли</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]' || roleAutor == '[ROLE_Продавец]'}">
+                <a class="nav-link" href="/shelfLife">Срок годности</a>
+            </li>
+            <li class="nav-item" th:if="${roleAutor== '[ROLE_Админ]'}">
+                <a class="nav-link" href="/treaties">Договоры</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+
+            <h2>Договоры</h2>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Номер договора</th>
+                    <th>Дата заключения договора</th>
+                    <th>Цена</th>
+                    <th>Содержимое договора</th>
+                    <th>Пользователь</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="treaty : ${treaties}">
+                    <td th:text="${treaty.id}"></td>
+                    <td th:text="${treaty.treatyNumber}"></td>
+                    <td th:text="${treaty.dateOfConclusion}"></td>
+                    <td th:text="${treaty.amount}"></td>
+                    <td th:text="${treaty.treatyContent}"></td>
+                    <td th:text="${treaty.user.login}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var rows = document.querySelectorAll('tbody tr');
+
+        rows.forEach(function (row) {
+            row.addEventListener('click', function () {
+                var id = row.querySelector('td:nth-child(1)').innerText;
+                var treatyNumber = row.querySelector('td:nth-child(2)').innerText;
+                var dateOfConclusion = row.querySelector('td:nth-child(3)').innerText;
+                var amount = row.querySelector('td:nth-child(4)').innerText;
+                var treatyContent = row.querySelector('td:nth-child(5)').innerText;
+                var userId = row.querySelector('td:nth-child(6)').innerText;
+
+                document.getElementById('updateId').value = id;
+                document.getElementById('updateNumber').value = treatyNumber;
+                document.getElementById('updateDate').value = dateOfConclusion;
+                document.getElementById('updateAmount').value = amount;
+                document.getElementById('updateContent').value = treatyContent;
+                document.getElementById('updateUser').value = userId;
+                document.getElementById('deleteId').value = id;
+            });
+        });
+    });
+</script>
+
+
+<h2>Панель управления договорами</h2>
+
+<form action="/treaties/add" method="post">
+    <label for="treatyNumber">Номер договора:</label>
+    <input type="text" id="treatyNumber" name="treatyNumber" required><br>
+
+    <label for="dateOfConclusion">Дата заключения договора:</label>
+    <input type="date" id="dateOfConclusion" name="dateOfConclusion" required><br>
+
+    <label for="amount">Цена:</label>
+    <input type="number" id="amount" name="amount" required><br>
+
+    <label for="treatyContent">Содержимое договора:</label>
+    <textarea id="treatyContent" name="treatyContent" required></textarea><br>
+
+    <label for="user_Id">Пользователь:</label>
+    <select id="user_Id" name="user_Id" required>
+        <option value="">Выберите пользователя</option>
+        <th:block th:each="user : ${users}">
+            <option th:value="${user.id}" th:text="${user.login}"></option>
+        </th:block>
+    </select><br>
+
+    <button type="submit">Доабвить</button>
+</form>
+
+<form action="/treaties/update" method="post">
+    <label for="updateId">ID договора:</label>
+    <select id="updateId" name="id">
+        <option value="">Выберите id договора</option>
+        <th:block th:each="treaty : ${treaties}">
+            <option th:value="${treaty.id}" th:text="${treaty.id}"></option>
+        </th:block>
+    </select>
+
+    <label for="updateNumber">Номер договора:</label>
+    <input type="text" id="updateNumber" name="treatyNumber"><br>
+
+    <label for="updateDate">Дата заключения договора:</label>
+    <input type="date" id="updateDate" name="dateOfConclusion"><br>
+
+    <label for="updateAmount">Цена:</label>
+    <input type="number" id="updateAmount" name="amount"><br>
+
+    <label for="updateContent">Содержимое договора:</label>
+    <input type="text" id="updateContent" name="treatyContent"><br>
+
+    <label for="updateUser">Пользователь:</label>
+    <select id="updateUser" name="user_Id">
+        <option value="">Выберите пользователя</option>
+        <th:block th:each="user : ${users}">
+            <option th:value="${user.id}" th:text="${user.login}"></option>
+        </th:block>
+    </select><br>
+
+    <button type="submit">Обновить</button>
+</form>
+
+<form action="/treaties/delete" method="post">
+    <label for="deleteId">Treaty ID to Delete:</label>
+    <select id="deleteId" name="id">
+        <option value="">Select Id Treaty</option>
+        <th:block th:each="treaty : ${treaties}">
+            <option th:value="${treaty.id}" th:text="${treaty.id}"></option>
+        </th:block>
+    </select>
+    <button type="submit">Удалить</button>
+</form>
+
+
+</body>
+</html>
